@@ -106,8 +106,14 @@ local ones such as `status`, `diff` or `commit` need nothing):
 1. Get the repository name: `basename -s .git "$(git remote get-url origin)"`.
    Before the first clone, ask the user for it; it looks like
    `dash-<number>-<7 hex chars>`.
-2. Call `hyros_get_dashboard_repository_token` with that name.
-3. Point `origin` at the token, then run the command:
+2. Call `hyros_get_dashboard_repository_token` with that name. Besides the
+  token it returns `commitAuthorName` and `commitAuthorEmail`.
+3. Set them as this repository's commit author (never `--global`):
+   ```
+   git config user.name "<commitAuthorName>"
+   git config user.email "<commitAuthorEmail>"
+   ```
+4. Point `origin` at the token, then run the command:
    ```
    git remote set-url origin "https://x-access-token:<token>@github.com/HyrosEngineeringAI/<repo>.git"
    git push origin <branch>
@@ -130,3 +136,5 @@ Rules:
  in with their HYROS account. Tool refused as not enabled ("Custom
  dashboards are not enabled for this account."): the feature is off for
  their account; they should contact HYROS support.
+- Commits are authored as the dashboard owner returned by the tool, not as the user.
+  Do not override the repository's `user.name` or `user.email`
